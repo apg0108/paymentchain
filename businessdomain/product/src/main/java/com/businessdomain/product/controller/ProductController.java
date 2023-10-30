@@ -16,12 +16,8 @@ public class ProductController {
     @Autowired
     private ProductRepository productRepository;
 
-    @Value("${user.role}")
-    private String role;
-
     @GetMapping()
     public List<Product> findAll() {
-        System.out.println(role);
         return productRepository.findAll();
     }
 

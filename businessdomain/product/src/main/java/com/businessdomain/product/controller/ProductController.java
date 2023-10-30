@@ -3,6 +3,7 @@ package com.businessdomain.product.controller;
 import com.businessdomain.product.entities.Product;
 import com.businessdomain.product.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,8 +16,12 @@ public class ProductController {
     @Autowired
     private ProductRepository productRepository;
 
+    @Value("${user.role}")
+    private String role;
+
     @GetMapping()
     public List<Product> findAll() {
+        System.out.println(role);
         return productRepository.findAll();
     }
 

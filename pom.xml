@@ -173,7 +173,6 @@
     <modules>
         <module>businessdomain</module>
         <module>infraestructuredomain</module>
-        <module>businessdomain/transaction</module>
     </modules>
 
 </project>

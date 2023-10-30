@@ -66,7 +66,8 @@ public class CustomerController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Customer> delete(@PathVariable Long id) {
         Optional<Customer> customer = customerRepository.findById(id);
-        if (customer.isEmpty()) return ResponseEntity.notFound().build();
+        if (customer.isEmpty())
+            return ResponseEntity.notFound().build();
         customerRepository.deleteById(id);
         return ResponseEntity.ok().build();
     }
@@ -74,7 +75,7 @@ public class CustomerController {
     @PutMapping("/{id}")
     public ResponseEntity<Customer> update(@PathVariable Long id, @RequestBody Customer input) {
         Optional<Customer> find = customerRepository.findById(id);
-        if(find.isPresent()){
+        if (find.isPresent()) {
             Customer customer = find.get();
             customer.setCode(input.getCode());
             customer.setIban(input.getIban());
@@ -88,7 +89,8 @@ public class CustomerController {
     @GetMapping("/full")
     public ResponseEntity<Customer> findByCode(@RequestParam String code) {
         Optional<Customer> customer = customerRepository.findCustomerByCode(code);
-        if (customer.isEmpty()) return ResponseEntity.notFound().build();
+        if (customer.isEmpty())
+            return ResponseEntity.notFound().build();
         Customer dataCustomer = customer.get();
         List<CustomerProduct> products = dataCustomer.getProducts();
         products.forEach(p -> p.setProductName(getProductName(p.getId())));
@@ -115,10 +117,9 @@ public class CustomerController {
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .build();
 
-        return build.method(HttpMethod.GET).uri(uriBuilder ->
-                uriBuilder.path("/iba")
-                        .queryParam("iba", iba)
-                        .build())
+        return build.method(HttpMethod.GET).uri(uriBuilder -> uriBuilder.path("/iba")
+                .queryParam("iba", iba)
+                .build())
                 .retrieve().bodyToFlux(Object.class).collectList().block();
     }
 }

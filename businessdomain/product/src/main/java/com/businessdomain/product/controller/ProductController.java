@@ -1,9 +1,11 @@
 package com.businessdomain.product.controller;
 
 import com.businessdomain.product.entities.Product;
+import com.businessdomain.product.model.ProductDto;
 import com.businessdomain.product.repository.ProductRepository;
+import com.businessdomain.product.service.ProductService;
+
 import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,46 +15,38 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/product")
 public class ProductController {
-    @Autowired
-    private ProductRepository productRepository;
 
     //@Value("${user.role}")
     //private String role;
+    @Autowired
+    private ProductService productService;
 
     @GetMapping()
-    public List<Product> findAll() {
-        //System.out.println(role);
-        return productRepository.findAll();
+    public List<ProductDto> findAll() {
+        return productService.findAll();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Product> findById(@PathVariable Long id) {
-        Optional<Product> product = productRepository.findById(id);
-        return product.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<ProductDto> findById(@PathVariable Long id) {
+        Optional<ProductDto> product = productService.findById(id);
+        return product.isPresent() ? ResponseEntity.ok(product.get()) : ResponseEntity.notFound().build();
     }
 
     @PostMapping()
     public void create(@RequestBody Product input) {
-        productRepository.save(input);
+        productService.create(input);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Product> delete(@PathVariable Long id) {
-        Optional<Product> customer = productRepository.findById(id);
-        if (customer.isEmpty()) return ResponseEntity.notFound().build();
-        productRepository.deleteById(id);
-        return ResponseEntity.ok().build();
+    public ResponseEntity delete(@PathVariable Long id) {
+        boolean deleted = productService.delete(id);
+        return deleted ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Product> update(@PathVariable Long id, @RequestBody Product input) {
-        Optional<Product> find = productRepository.findById(id);
-        if(find.isPresent()){
-            Product product = find.get();
-            product.setCode(input.getCode());
-            product.setName(input.getName());
-            return ResponseEntity.ok(productRepository.save(product));
-        }
-        return ResponseEntity.badRequest().build();
+    public ResponseEntity<ProductDto> update(@PathVariable Long id, @RequestBody Product input) {
+        Optional<ProductDto> productDto = productService.update(id, input);
+        return productDto.isPresent() ? ResponseEntity.ok(productDto.get())
+        : ResponseEntity.notFound().build();
     }
 }
